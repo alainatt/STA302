@@ -1,0 +1,120 @@
+---
+title: "Mini Assignment"
+author: "Shuxin Tan 1007625447"
+date: "2023-07-20"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+setwd("/Users/tanshuxin/Desktop/Second Year s/STA302/Mini Assignment")
+
+library(tidyverse)
+model=read.csv('multiple_linear_regression_dataset.csv', header=TRUE)
+
+attach(model)
+```
+
+**Question 1:**\
+Age and Income: $Y_i = \beta_{01} + \beta_{11}X_i + \epsilon_i$\
+$Y_i$ is the observed value of income on unit i and $X_i$ is the observed value of age on unit i. $\epsilon_i$ is the error for each pair of $X_i$ and $Y_i$, which are independent and identically distributed with normal distribution with mean 0 and variance $\sigma^2$. $\beta_{01}$ is the intercept and $\beta_{11}$ is the slope, which are all parameters.
+
+Experience and Income: $Y_i = \beta_{02} + \beta_{12}X_i + \epsilon_i$\
+Similarly, $Y_i$ is the observed value of income on unit i and $X_i$ is the observed value of experience on unit i. $\epsilon_i$ is the error for each observed pair of $X_i$ and $Y_i$, which are independent and identically distributed with normal distribution with mean 0 and variance $\sigma^2$. $\beta_{02}$ is the intercept and $\beta_{12}$ is the slope, which are all parameters.
+
+**Question 2:**\
+```{r}
+simple.fit_1 = lm(income~age, data=model)
+summary(simple.fit_1)
+
+library(ggplot2)
+
+ggplot(model, aes(x = age, y = income)) + 
+  geom_point() +
+  stat_smooth(method = "lm", col = "red")
+
+b0_1 <- summary(simple.fit_1)$coefficients[1, 1]
+b1_1 <- summary(simple.fit_1)$coefficients[2, 1]
+
+b0_1
+b1_1
+
+simple.fit_2 = lm(income~experience, data=model)
+summary(simple.fit_2)
+
+library(ggplot2)
+
+ggplot(model, aes(x = experience, y = income)) + 
+  geom_point() +
+  stat_smooth(method = "lm", col = "red")
+
+b0_2 <- summary(simple.fit_2)$coefficients[1, 1]
+b1_2 <- summary(simple.fit_2)$coefficients[2, 1]
+
+b0_2
+b1_2
+```
+
+By using the lm method in R, we know the value of $\hat{\beta_0}$ and $\hat{\beta_1}$ for both estimated linear regression lines from the summary of the lm method.\
+Then,\
+Age and Income: $\hat{Y} = 22975.16 + 447.9278X$\
+Experience and Income: $\hat{Y} = 28248.45 + 2014.041X$
+
+**Question 3:**\
+```{r}
+ssreg_2 <- b1_2^2 * sum((experience - mean(experience))^2)
+sstot_2 <- sum((income - mean(income))^2)
+R_2 <- sqrt(ssreg_2/sstot_2)
+R_2
+```
+The correlation coefficient r for the model examining the relationship between income and experience is 0.9842266.
+
+**Question 4:**\
+```{r}
+ssreg_1 <- b1_1^2 * sum((age - mean(age))^2)
+sstot_1 <- sum((income - mean(income))^2)
+R_1 <- sqrt(ssreg_1/sstot_1)
+R_1
+```
+The correlation coefficient r for the model examining the relationship between income and age is 0.5322043.
+
+**Question 5:**\
+Since r also equals $\frac{Cov(X,Y)}{\sigma_X\sigma_Y}$, then $\hat\beta_1=\frac{\sigma_Y}{\sigma_X}\frac{Cov(X,Y)}{\sigma_X\sigma_Y}=\frac{\sigma_Y}{\sigma_X}r$. So, as correlation coefficient r for income and age is 0.5322043 which is considered to be moderate, the regression coefficient $\hat{\beta_1}$ also becomes relatively less meaningful. 
+
+**Question 6:**\
+```{r}
+library("gridExtra")   
+library(ggplot2)
+
+ggp1 <- ggplot(model, aes(x = age, y = experience)) + 
+  geom_point()
+ggp2 <- ggplot(model, aes(x = age, y = income)) + 
+  geom_point()
+ggp3 <- ggplot(model, aes(x = experience, y = income)) + 
+  geom_point()
+
+grid.arrange(ggp1, ggp2, ggp3, ncol = 3)
+```
+From the three scatter plots, we can see that generally as $X_i$ increases, $Y_i$ also increases for these three scatter plots. However, the relation between experience and age, as well as the relation between income and age are relatively weak, as the plots in these two graphs are more scattered. The relation between income and experience is much stronger, showing a more linear correlation. Also, in question 3, we know the correlation coefficient for income and experience is 0.9842266 which is very closed to 1. This suggests there is a strong positive linear relationship between experience and income. Therefore, a simple linear regression is more appropriate. The final best model is the simple linear regression model with experience being the predictor variable and income being the response variable. And since the relation between experience and age, as well as the relation between income and age are relatively weak, it's hard to tell if there is any multiple linear regression. 
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
